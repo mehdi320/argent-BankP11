@@ -1,28 +1,34 @@
+// Importation de configureStore depuis Redux Toolkit pour créer le store
 import { configureStore } from "@reduxjs/toolkit";
+
+// Importation du reducer principal combiné
 import rootReducer from "./reducers/rootReducer";
+
+// Importation des modules de persistance pour sauvegarder le state dans le localStorage
 import { persistReducer, persistStore } from "redux-persist";
+import storage from "redux-persist/lib/storage"; // Utilisation de localStorage comme stockage par défaut
 
-import storage from "redux-persist/lib/storage";
-
-// Configuration de la persistance
+// Configuration pour la persistance des données Redux
 const persistConfig = {
-    key: "root",
-    storage,
+  key: "root", // Clé racine pour le state persisté
+  storage, // Définir le stockage à utiliser (ici, localStorage)
 };
 
+// Application de la configuration de persistance au reducer principal
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-// Création du store Redux en utilisant configureStore
+// Création du store Redux avec Redux Toolkit
 const store = configureStore({
-    reducer: persistedReducer, // Utiliser le reducer persistant comme reducer principal
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-            serializableCheck: false,
-        }),
-    devTools: true, // Activer l'extension Redux DevTools
+  reducer: persistedReducer, // Utilisation du reducer persistant comme reducer principal
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false, // Désactivation du check de serialisation pour la compatibilité avec la persistance
+    }),
+  devTools: true, // Activation des outils de développement Redux DevTools
 });
 
-// Création du persistor en utilisant persistStore avec le store
+// Création d'un persistor pour gérer la persistance du store
 const persistor = persistStore(store);
 
+// Exportation du store et du persistor pour être utilisés dans l'application
 export { store, persistor };
